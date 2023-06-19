@@ -7,10 +7,11 @@
         @click="navDrawer=!navDrawer"
       ></v-icon>
       <v-toolbar-title>
-        <span class="text-h3 font-weight-bold">BookMarker.com</span>
+        <span class="text-h3 font-weight-bold">BookMarker</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn size="large" append-icon="mdi-login">Login</v-btn>
+      <v-btn size="large" append-icon=""><NuxtLink to="/" class="text-decoration-none">Login</NuxtLink></v-btn>
+      <v-btn size="large" append-icon=""><NuxtLink to="/signup" class="text-decoration-none">Sign Up</NuxtLink></v-btn>
     </v-toolbar>
 
     <v-navigation-drawer

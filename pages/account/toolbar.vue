@@ -7,7 +7,7 @@
         @click="navDrawer = !navDrawer"
       ></v-icon>
       <v-toolbar-title>
-        <span class="text-h3 font-weight-bold">BookMarker.com</span>
+        <span class="text-h3 font-weight-bold">BookMarker</span>
       </v-toolbar-title>
       <v-btn
         variant="text"
