@@ -1,24 +1,34 @@
 <template>
-    <nav>
-    <v-toolbar color="cyan-darken-3" app>
-      <v-icon class="ma-3" icon="mdi-menu" @click="navDrawer = !navDrawer"></v-icon>
+  <nav>
+    <v-toolbar color="cyan-darken-3" >
+      <v-icon
+        class="ma-3"
+        icon="mdi-menu"
+        @click="navDrawer = !navDrawer"
+      ></v-icon>
       <v-toolbar-title>
         <span class="text-h3 font-weight-bold">BookMarker.com</span>
       </v-toolbar-title>
-      <v-spacer></v-spacer>
       <v-btn
-            variant="text"
-            color="white-text"
-            size="large"
-            class="ma-3 "
-            prepend-icon="mdi-bookmark-multiple-outline"
-            @click="$emit('showAllBookmarks')"
-            >All bookmarks</v-btn
-          >
-      <v-btn size="large" append-icon="mdi-logout">Logout</v-btn>
+        variant="text"
+        color="white-text"
+        class="ma-3"
+        prepend-icon="mdi-home"
+        @click="$emit('home')"
+        >Home
+      </v-btn>
+      <v-btn
+        variant="text"
+        color="white-text"
+        class="ma-3"
+        prepend-icon="mdi-bookmark-multiple"
+        @click="$emit('showAllBookmarks')"
+        >All bookmarks</v-btn
+      >
+      <v-btn append-icon="mdi-logout" @click="$emit('logout')">Logout</v-btn>
     </v-toolbar>
-    
-    <v-navigation-drawer  color="deep-purple" v-model="navDrawer" app>
+
+    <v-navigation-drawer disable-resize-watcher color="deep-purple" v-model="navDrawer" app temporary>
       <!-- <img src="../assets/Srilaprabhupada.jpeg"> -->
       <v-list align="center">
         <v-icon
@@ -33,7 +43,7 @@
             color="blue-grey-darken-4"
             class="ma-3"
             prepend-icon="mdi-bookmark-multiple-outline"
-            @click="$emit('showAllBookmarks'),navDrawer=!navDrawer"
+            @click="$emit('showAllBookmarks'), (navDrawer = !navDrawer)"
             >All bookmarks</v-btn
           >
         </v-list>
@@ -54,19 +64,18 @@
 <script>
 export default {
   name: "navigatorTop",
-  setup(){
-    onBeforeMount:{
+  setup() {
+    onBeforeMount: {
       console.log("toolbar2.onBeforeMount");
     }
-    onMounted:{
+    onMounted: {
       console.log("toolbar2.onMounted");
     }
-    
   },
   data() {
     return {
       navDrawer: false,
-      emit:['showAllBookmarks'],
+      emit: ["showAllBookmarks", "home", "logout"],
       menucontent: [
         {
           icon: "mdi-plus",
@@ -94,6 +103,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

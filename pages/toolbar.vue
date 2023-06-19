@@ -18,6 +18,8 @@
       width="200"
       v-model="navDrawer"
       app
+      disable-resize-watcher
+      temporary
     >
       <!-- <img src="../assets/Srilaprabhupada.jpeg"> -->
       <v-list align="center">

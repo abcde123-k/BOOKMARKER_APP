@@ -2,7 +2,6 @@
   <v-app>
     <toolBar v-if="!show" />
     <div v-if="!show">
-      <NuxtLink to="./account/">index1</NuxtLink>
       <form>
         <div class="middle">
           <v-text-field label="Name" v-model="username"></v-text-field
@@ -13,7 +12,7 @@
         </div>
       </form>
     </div>
-    <index1 v-if="show" />
+    <index1 v-if="show" @logout="logoutfunction"/>
   </v-app>
 </template>
 
@@ -44,6 +43,7 @@ export default {
       const show = ref(false);
       const username = ref("");
       provide('username', username);
+      
     function showbookmarks() {
       
       // const firestore = setupFirebase();
@@ -64,10 +64,15 @@ export default {
       show.value=true;
 
     }
+    function logoutfunction(){
+      show.value=false;
+      username.value='';
+    }
     return {
       show,
       username,
       showbookmarks,
+      logoutfunction,
     };
   },
 };

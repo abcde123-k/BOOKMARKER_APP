@@ -162,7 +162,7 @@ export default {
     const desc = ref("");
     const link = ref("");
     function addBookmark() {
-      console.log(title, desc, link);
+      console.log(title.value, desc.value, link.value);
       const firestore = setupFirebase();
       const name = collection(firestore, "name");
       const d = doc(name, uname.value);
@@ -173,7 +173,10 @@ export default {
         description: desc.value,
         link: link.value,
       })
-        .then(() => {
+      .then(() => {
+          title.value='';
+          desc.value='';
+          link.value='';
           dialog.value = false;
         })
         .catch(() => {
