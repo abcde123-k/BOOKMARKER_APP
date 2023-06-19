@@ -2,14 +2,14 @@
   <v-app>
     <toolBar v-if="!show" />
     <div v-if="!show">
-      <form>
+      <form class="signup">
         <div class="middle">
-          <v-text-field label="Name" v-model="username"></v-text-field
-          ><v-spacer></v-spacer>
-          <v-btn class="center" append-icon="mdi-login" @click="showbookmarks"
-            >Let Start</v-btn
-          >
+          <v-text-field label="Email" v-model="email"></v-text-field><v-spacer></v-spacer>
+          <v-text-field label="Password" v-model="password"></v-text-field><v-spacer></v-spacer>
+          <v-btn class="center" append-icon="mdi-login" @click="login">Login</v-btn>
+          <!-- <v-container>New User?</v-container> -->
         </div>
+        <v-container class="center">New User?<NuxtLink to="/signup">Signup</NuxtLink></v-container>
       </form>
     </div>
     <index1 v-if="show" @logout="logoutfunction"/>
@@ -29,11 +29,18 @@ import {
   getFirestore,
   Firestore,
 } from "firebase/firestore";
-// import {firestore} from "../plugins/firebase.client"
-// import { initializeApp } from "firebase/app";
+
+// for authentication setup 
+import {
+  getAuth, 
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from 'firebase/auth';
+
 import { setupFirebase } from "../composables/firebasesetup.js";
-// import firebaseConfig from "../plugins/firebase.client.js"
-// import  db  from "@/plugins/firebase.js"
+import{setupAuth} from "../composables/authsetup.js";
+
 export default {
   components: {
     toolBar,
@@ -42,36 +49,50 @@ export default {
   setup() {
       const show = ref(false);
       const username = ref("");
+      const email = ref("");
+      const password = ref("");
+      const auth = setupAuth();
       provide('username', username);
       
-    function showbookmarks() {
-      
-      // const firestore = setupFirebase();
-      // const name = collection(firestore, 'name');
-      // const d=doc(name,username.value);
-      // const b=collection(d,'bookmarks');
-      // getDocs(b)
-      //   .then((snapshot)=>{
-      //     let book=[]
-      //     snapshot.docs.forEach((doc)=>{
-      //       book.push({...doc.data(),id:doc.id})
-      //     })
-      //     console.log(book);
-      //   })
-      //   .catch((err)=>{
-      //     console.log(err.message);
-      //   })
-      show.value=true;
+      function login() {
 
-    }
+        signInWithEmailAndPassword(auth, email.value, password.value)
+          .then((cred) => {
+            console.log('user created:', cred.user);
+            show.value=true;
+          })
+          .catch((err) =>{
+            console.log(err.message)
+          })
+          
+          onAuthStateChanged(auth, (user)=>{
+            if (user) {
+      
+          } else {
+          
+          }
+        })     
+      }
     function logoutfunction(){
-      show.value=false;
-      username.value='';
+      signOut(auth)
+      .then(() => {
+    
+        show.value = false;
+        email.value = "";
+        password.value = "";
+        console.log("logout success")
+      })
+      .catch((error) => {
+            // An error happened.
+      });
     }
+
     return {
       show,
       username,
-      showbookmarks,
+      email,
+      password,
+      login,
       logoutfunction,
     };
   },
