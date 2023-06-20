@@ -10,8 +10,8 @@
         <span class="text-h3 font-weight-bold">BookMarker</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn size="large" append-icon=""><NuxtLink to="/" class="text-decoration-none">Login</NuxtLink></v-btn>
-      <v-btn size="large" append-icon=""><NuxtLink to="/signup" class="text-decoration-none">Sign Up</NuxtLink></v-btn>
+      <v-btn size="large" @click="$emit('showlogin')">Login</v-btn>
+      <v-btn size="large" @click="$emit('showsignup')">Sign Up</v-btn>
     </v-toolbar>
 
     <v-navigation-drawer
@@ -43,6 +43,7 @@
 <script>
 export default {
   name: "toolBar",
+  emits: ['showlogin', 'showsignup'],
   setup(){
     onBeforeMount:{
       console.log("toolbar1.onBeforeMount");
