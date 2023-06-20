@@ -1,28 +1,43 @@
 <template>
-  <div>search
+  <div>
+    search
     <form action="">
       <div>
-        <input type="text" placeholder="search here" v-model="searchBar">
+        <input type="text" placeholder="search here" v-model="searchBar" />
       </div>
     </form>
   </div>
 
-
-
-
   <div>
-    <v-sheet class="d-flex flex-wrap">
-      <v-sheet v-for="bookmark in sortFunc()" :key="bookmark.id"  class="ma-2 pa-2 align-self-center">
-        <v-card v-if="filteredList(bookmark)" class="mx-auto" width="350">
+    <v-sheet class="d-flex justify-sm-space-around flex-wrap" justify="center">
+      <v-sheet
+        v-for="bookmark in sortFunc()"
+        :key="bookmark.id"
+        class="align-self-center"
+      >
+        <v-card
+          v-if="filteredList(bookmark)"
+          class="ma-7 pa-2"
+          min-width="320"
+          max-width="380"
+          border
+        >
           <v-card-title> {{ bookmark.title }}</v-card-title>
 
           <v-card-actions>
-            <v-btn color="orange-lighten-2" variant="text"> Link </v-btn>
+            <v-btn color="green-accent-4" variant="text"> Link </v-btn>
 
             <v-spacer></v-spacer>
+              <v-icon icon="mdi-content-copy" @click="bookmark.showDesc = !bookmark.showDesc" class="ma-2" color="deep-purple-darken-3"></v-icon>
+              <v-icon icon="mdi-book-edit" @click="bookmark.showDesc = !bookmark.showDesc" class="ma-2" color="deep-purple-darken-3"></v-icon>
+              <v-icon icon="mdi-delete" size="28" @click="bookmark.showDesc = !bookmark.showDesc" class="ma-2" color="deep-purple-darken-3"></v-icon>
 
-            <v-btn :icon="bookmark.showDesc ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-              @click="bookmark.showDesc = !bookmark.showDesc"></v-btn>
+            <v-btn
+              :text="bookmark.showDesc ? 'Collapse' : 'Expand'"
+              :append-icon="bookmark.showDesc ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+              @click="bookmark.showDesc = !bookmark.showDesc"
+              width="120"
+            ></v-btn>
           </v-card-actions>
 
           <v-expand-transition>
@@ -48,23 +63,17 @@ export default {
   name: "allBookmarks",
   data() {
     return {
-      searchBar: '',
-      sorted: []
-    }
+      searchBar: "",
+    };
   },
-  computed: {
-    
-  },
+  computed: {},
 
   setup() {
     const ABM = ref(inject("ABM"));
-    const show = ref(false);
     return {
       ABM,
-      show
     };
   },
-
 
   methods: {
     sortFunc() {
@@ -74,17 +83,17 @@ export default {
     },
 
     filteredList(book) {
-      console.log(book)
-        return (book.title.toLowerCase().includes(this.searchBar.toLowerCase()) || book.description.toLowerCase().includes(this.searchBar.toLowerCase()))
-    
-    }
-
+      return (
+        book.title.toLowerCase().includes(this.searchBar.toLowerCase()) ||
+        book.description.toLowerCase().includes(this.searchBar.toLowerCase())
+      );
+    },
   },
 };
 </script>
 
 <style scoped>
 .box {
-  height: 20px
+  height: 20px;
 }
 </style>
