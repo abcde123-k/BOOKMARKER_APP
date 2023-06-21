@@ -26,52 +26,64 @@ export default {
     //   //
     // })
     const all=ref(false);
-    const dialog = ref(false);
-    const modifydialog = ref(false);
-    const searchdialog = ref(false);
-    const deletedialog = ref(false);
     const title = ref("");
     const desc = ref("");
     const link = ref("");
     const ABM = [];
-      // console.log("All Bookmark pushed")
-      // const uname = inject("username");
+
+    // firebase setup
     const firestore = setupFirebase();
     const name = collection(firestore, "name");
     const d = doc(name, uname.value);
-    const b = collection(d, "bookmarks");
-    getDocs(b)
-    .then((snapshot) => {
-      snapshot.docs.forEach((doc) => {
-        ABM.push({ ...doc.data(), id:doc.id });
-        });
-      })
-      .catch(() => {
-        console.log("Error occured");
-      });
-      console.log(ABM)
-      
-      function addBookmark() {
-        console.log(title, desc, link);
-        // console.log(b);
-        addDoc(b, {
-          title: title.value,
-          description: desc.value,
-          link: link.value,
-        })
-        .then(() => {
-          dialog.value = false;
-          console.log(ABM)
-        })
-        .catch(() => {
-          console.log("error");
-        });
-    }
+    const group = collection(d, "group");
 
-    function deletecard(id) {
+
+    // group items
+    const items = [];
+    onSnapshot(group, (snapshot) => {
+      snapshot.docs.forEach((doc) => {
+        const Title = { ...doc.data() };
+        if (items.find((gname) => gname === Title.title) == undefined){
+          items.push(Title.title);
+        }
+      });
+    });
+
+    // taking all bokokmarks
+    onSnapshot(group, (snap) => {
+      snap.docs.forEach((groupNameid) => {
+        const Title = { ...groupNameid.data() };
+        const g = collection(d, Title.title);
+        getDocs(g)
+          .then((snapshot) => {
+            snapshot.docs.forEach((doc) => {
+              let count = 0;
+              ABM.forEach((book) => {
+                if (book.id === doc.id) {
+                  count += 1;
+                }
+              });
+              if (count == 0) {
+                ABM.push({
+                  ...doc.data(),
+                  id: doc.id,
+                  group: Title.title,
+                  showDesc: false,
+                });
+              }
+            });
+          })
+          .catch(() => {
+            console.log("error in storing data");
+          });
+      });
+    });
+
+    // deleting bookmark
+    function deletecard(id, group) {
         console.log(id);
         // const docref = doc(firestore, "name/" + uname.value +"/bookmarks", id);
-        const docref = doc(d, "/bookmarks", id);
+        const docref = doc(d, "/"+group, id);
 
         console.log(docref);
           deleteDoc(docref)
@@ -87,11 +99,6 @@ export default {
 
     provide('ABM',ABM)
     return {
-      dialog,
-      modifydialog,
-      deletedialog,
-      searchdialog,
-      addBookmark,
       deletecard,
       title,
       link,

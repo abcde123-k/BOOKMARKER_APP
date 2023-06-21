@@ -1,202 +1,137 @@
 <template>
   <div>
-    <v-container border="black 2px" align="center" class="mx-6 mt-8">
-      <v-icon size="100" icon="mdi-bookmark-box-multiple"></v-icon>
-      <v-container class="text-blue">
-        <v-icon size="40" icon="mdi-link-box-variant"></v-icon>
-        Keep all your important links at one place
-        <v-icon size="40" icon="mdi-link-box-variant"></v-icon>
-      </v-container>
-    </v-container>
-    <v-container border align="center" class="mx-10 my-0 pa-20">
-      <div>
-        <v-btn color="primary" @click="dialog = true" class="ma-4"> Add </v-btn>
+    <v-sheet class="d-flex justify-sm-space-around middle">
+      <v-btn
+        append-icon="mdi-plus"
+        width="220"
+        height="60"
+        color="success"
+        @click="dialog = true"
+      >
+        ADD Bookmark
+      </v-btn>
+    </v-sheet>
 
-        <v-dialog v-model="dialog" width="auto">
-          <v-card>
-            <v-toolbar color="primary" title="Add Bookmark"></v-toolbar>
-            <v-card-text>
-              <v-text-field label="Title" v-model="title"></v-text-field>
-              <v-textarea
-                label="Description"
-                rows="2"
-                cols="40"
-                v-model="desc"
-              ></v-textarea>
-              <v-text-field label="Link" v-model="link"></v-text-field>
-            </v-card-text>
-            <v-card-actions>
-              <div>
-                <v-btn
-                  color="success"
-                  width="250"
-                  @click.prevent="addBookmark()"
-                  >Add</v-btn
-                >
-                <!-- <v-spacer></v-spacer> -->
-                <v-btn color="primary" width="250" @click="dialog = false"
-                  >Close Dialog</v-btn
-                >
-              </div>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
-        <v-btn color="primary" @click="modifydialog = true" class="ma-4">
-          modify
-        </v-btn>
-
-        <v-dialog v-model="modifydialog" width="auto">
-          <v-card>
-            <v-toolbar color="primary" title="Add Bookmark"></v-toolbar>
-            <v-card-text>
-              <v-text-field label="Title" v-model="title"></v-text-field>
-              <v-textarea
-                label="Description"
-                rows="2"
-                cols="40"
-                v-model="desc"
-              ></v-textarea>
-              <v-text-field label="Link" v-model="link"></v-text-field>
-            </v-card-text>
-            <v-card-actions>
-              <div>
-                <v-btn
-                  color="success"
-                  width="250"
-                  @click.prevent="modifyBookmark()"
-                  >Add</v-btn
-                >
-                <!-- <v-spacer></v-spacer> -->
-                <v-btn color="primary" width="250" @click="modifydialog = false"
-                  >Close Dialog</v-btn
-                >
-              </div>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
-        <v-btn color="primary" @click="searchdialog = true" class="ma-4">
-          Search
-        </v-btn>
-
-        <v-dialog v-model="searchdialog" width="auto">
-          <v-card>
-            <v-toolbar color="primary" title="Add Bookmark"></v-toolbar>
-            <v-card-text>
-              <v-text-field label="Title" v-model="title"></v-text-field>
-              <v-textarea
-                label="Description"
-                rows="2"
-                cols="40"
-                v-model="desc"
-              ></v-textarea>
-              <v-text-field label="Link" v-model="link"></v-text-field>
-            </v-card-text>
-            <v-card-actions>
-              <div>
-                <v-btn
-                  color="success"
-                  width="250"
-                  @click.prevent="searchBookmark()"
-                  >Add</v-btn
-                >
-                <!-- <v-spacer></v-spacer> -->
-                <v-btn color="primary" width="250" @click="searchdialog = false"
-                  >Close Dialog</v-btn
-                >
-              </div>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-btn color="primary" @click="deletedialog = true" class="ma-4">
-          Delete
-        </v-btn>
-
-        <v-dialog v-model="deletedialog" width="auto">
-          <v-card>
-            <v-toolbar color="primary" title="Add Bookmark"></v-toolbar>
-            <v-card-text>
-              <v-text-field label="Title" v-model="title"></v-text-field>
-              <v-textarea
-                label="Description"
-                rows="2"
-                cols="40"
-                v-model="desc"
-              ></v-textarea>
-              <v-text-field label="Link" v-model="link"></v-text-field>
-            </v-card-text>
-            <v-card-actions>
-              <div>
-                <v-btn
-                  color="success"
-                  width="250"
-                  @click.prevent="deleteBookmark()"
-                  >Add</v-btn
-                >
-                <!-- <v-spacer></v-spacer> -->
-                <v-btn color="primary" width="250" @click="deletedialog = false"
-                  >Close Dialog</v-btn
-                >
-              </div>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </div>
-    </v-container>
+    <v-dialog v-model="dialog" width="auto">
+      <v-card>
+        <v-toolbar color="primary" title="Add Bookmark"></v-toolbar>
+        <v-card-text>
+          <v-text-field label="Title" v-model="title"></v-text-field>
+          <v-textarea
+            label="Description"
+            rows="2"
+            cols="40"
+            v-model="desc"
+          ></v-textarea>
+          <v-combobox
+            v-model:search="search"
+            :hide-no-data="false"
+            :items="items"
+            hide-selected
+            label="Add or Create a new Group"
+            persistent-hint
+            small-chips
+          >
+            <template v-slot:no-data>
+              <v-list-item>
+                <v-list-item-title>
+                  No results matching "<strong>{{ search }}</strong
+                  >". Press <kbd>enter</kbd> to create a new one
+                </v-list-item-title>
+              </v-list-item>
+            </template>
+          </v-combobox>
+          <v-text-field label="Link" v-model="link"></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <div>
+            <v-btn color="success" width="250" @click.prevent="addBookmark()"
+              >Add</v-btn
+            >
+            <!-- <v-spacer></v-spacer> -->
+            <v-btn color="primary" width="250" @click="dialog = false"
+              >Close Dialog</v-btn
+            >
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { inject, ref } from "vue";
-import { collection, doc, addDoc } from "firebase/firestore";
+import { collection, doc, addDoc, getDocs } from "firebase/firestore";
 export default {
   name: "buttonS",
   setup() {
     const uname = inject("username");
     const dialog = ref(false);
-    const modifydialog = ref(false);
-    const searchdialog = ref(false);
-    const deletedialog = ref(false);
     const title = ref("");
     const desc = ref("");
     const link = ref("");
+    const search = ref("personal");
+
+    const items = inject("items");
+
+    // addbutton function
     function addBookmark() {
-      console.log(title.value, desc.value, link.value);
-      const firestore = setupFirebase();
-      const name = collection(firestore, "name");
-      const d = doc(name, uname.value);
-      const b = collection(d, "bookmarks");
-      // console.log(b);
-      addDoc(b, {
+      const f = setupFirebase();
+      const name = collection(f, "name");
+      const userdoc = doc(name, uname.value);
+      const group = collection(userdoc, "group");
+      getDocs(group).then((snapshot) => {
+        let grcnt = 0;
+        snapshot.docs.forEach((doc) => {
+          const Title = { ...doc.data() };
+          if (Title.title == search.value) {
+            grcnt = grcnt + 1;
+          }
+        });
+        if (grcnt === 0) {
+          addDoc(group, {
+            title: search.value,
+          })
+            .then(() => {
+              console.log("added successfully");
+            })
+            .catch(() => {
+              console.log("error in new group");
+            });
+        }
+      });
+
+      const grcol = collection(userdoc, search.value);
+      addDoc(grcol, {
         title: title.value,
         description: desc.value,
         link: link.value,
       })
-      .then(() => {
-          title.value='';
-          desc.value='';
-          link.value='';
+        .then(() => {
+          title.value = "";
+          desc.value = "";
+          link.value = "";
           dialog.value = false;
         })
         .catch(() => {
-          console.log("error");
+          console.log("error in add");
         });
-      
     }
     return {
       dialog,
-      modifydialog,
-      deletedialog,
-      searchdialog,
       addBookmark,
       title,
       link,
       desc,
-      // showAllBookmarks,
+      items,
+      search,
     };
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.middle{
+  margin-top:25%;
+}
+</style>
