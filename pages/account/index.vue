@@ -1,23 +1,19 @@
 <template>
   <v-app>
-    <toolbar
-      @showAllBookmarks="all = true"
-      @home="all = false"
-      @logout="$emit('logout')"
-    ></toolbar>
-    <buttonS v-if="!all" />
+    <toolbar @showAllBookmarks="all=true" @home="all=false" @logout="$emit('logout')"></toolbar>
+    <buttonS v-if="!all"/>
 
-    <allBookmarks v-if="all" />
+    <allBookmarks v-if="all" @deletebookmark="deletecard"/>
   </v-app>
 </template>
 
 <script>
-import { collection, doc, addDoc, onSnapshot } from "firebase/firestore";
+import { collection, doc, addDoc, deleteDoc, getDocs } from "firebase/firestore";
 import { setupFirebase } from "../../composables/firebasesetup.js";
 import toolbar from "./toolbar.vue";
-import { inject, ref, provide } from "vue";
-import buttonS from "./buttons.vue";
-import allBookmarks from "./allBookmarks.vue";
+import { inject, ref, provide} from "vue";
+import buttonS from "./buttons.vue"
+import allBookmarks from "./allBookmarks.vue"
 export default {
   name: "index1",
   data() {
@@ -29,7 +25,7 @@ export default {
     // onMounted(()=>{
     //   //
     // })
-    const all = ref(false);
+    const all=ref(false);
     const dialog = ref(false);
     const modifydialog = ref(false);
     const searchdialog = ref(false);
@@ -38,74 +34,80 @@ export default {
     const desc = ref("");
     const link = ref("");
     const ABM = [];
-    // console.log("All Bookmark pushed")
-    // const uname = inject("username");
+      // console.log("All Bookmark pushed")
+      // const uname = inject("username");
     const firestore = setupFirebase();
     const name = collection(firestore, "name");
     const d = doc(name, uname.value);
     const b = collection(d, "bookmarks");
-
-    onSnapshot(b, (snapshot) => {
+    getDocs(b)
+    .then((snapshot) => {
       snapshot.docs.forEach((doc) => {
-        let count=0;
-        ABM.forEach((book) => {
-          if(book.id===doc.id){
-            count+=1;
-          }
+        ABM.push({ ...doc.data(), id:doc.id });
         });
-        if(count==0){
-          ABM.push({ ...doc.data(), id: doc.id, showDesc: false });
-        }
-      });
-    });
-    
-    function addBookmark() {
-      console.log(title, desc, link);
-      // console.log(b);
-      addDoc(b, {
-        title: title.value,
-        description: desc.value,
-        link: link.value,
       })
+      .catch(() => {
+        console.log("Error occured");
+      });
+      console.log(ABM)
+      
+      function addBookmark() {
+        console.log(title, desc, link);
+        // console.log(b);
+        addDoc(b, {
+          title: title.value,
+          description: desc.value,
+          link: link.value,
+        })
         .then(() => {
           dialog.value = false;
+          console.log(ABM)
         })
         .catch(() => {
           console.log("error");
         });
     }
-    provide("ABM", ABM);
+
+    function deletecard(id) {
+        console.log(id);
+        // const docref = doc(firestore, "name/" + uname.value +"/bookmarks", id);
+        const docref = doc(d, "/bookmarks", id);
+
+        console.log(docref);
+          deleteDoc(docref)
+          .then((e) => {
+            // e.preventDefault();
+            console.log("delete success");
+          })
+          .catch(() => {
+            console.log("error");
+          });
+      
+      }
+
+    provide('ABM',ABM)
     return {
       dialog,
       modifydialog,
       deletedialog,
       searchdialog,
       addBookmark,
+      deletecard,
       title,
       link,
       desc,
       all,
     };
   },
-  data() {
-    return {
-      emit: ["logout"],
-    };
+  data(){
+    return{
+      emit:['logout'],
+    }
   },
   components: {
     toolbar,
     buttonS,
     allBookmarks,
-  },
-  methods: {
-    see(id) {
-      for (book in this.ABM) {
-        if (book[id] == id) {
-          return true;
-        }
-      }
-      return false;
-    },
   },
 };
 </script>
