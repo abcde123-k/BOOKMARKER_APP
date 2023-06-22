@@ -1,19 +1,30 @@
 <template>
   <v-app>
-    <toolbar @showAllBookmarks="all=true" @home="all=false" @logout="$emit('logout')"></toolbar>
-    <buttonS v-if="!all"/>
+    <toolbar
+      @showAllBookmarks="all = true"
+      @home="all = false"
+      @logout="$emit('logout')"
+    ></toolbar>
+    <buttonS v-if="!all" />
 
-    <allBookmarks v-if="all" @deletebookmark="deletecard"/>
+    <allBookmarks v-if="all" @deletebookmark="deletecard" />
   </v-app>
 </template>
 
 <script>
-import { collection, doc, addDoc, deleteDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  deleteDoc,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
 import { setupFirebase } from "../../composables/firebasesetup.js";
 import toolbar from "./toolbar.vue";
-import { inject, ref, provide} from "vue";
-import buttonS from "./buttons.vue"
-import allBookmarks from "./allBookmarks.vue"
+import { inject, ref, provide } from "vue";
+import buttonS from "./buttons.vue";
+import allBookmarks from "./allBookmarks.vue";
+// import structuredClone from '@ungap/structured-clone';
 export default {
   name: "index1",
   data() {
@@ -25,11 +36,11 @@ export default {
     // onMounted(()=>{
     //   //
     // })
-    const all=ref(false);
+    const all = ref(false);
     const title = ref("");
     const desc = ref("");
     const link = ref("");
-    const ABM = [];
+    let ABM = [];
 
     // firebase setup
     const firestore = setupFirebase();
@@ -37,67 +48,71 @@ export default {
     const d = doc(name, uname.value);
     const group = collection(d, "group");
 
-
     // group items
-    const items = [];
+    let items = [];
     onSnapshot(group, (snapshot) => {
       snapshot.docs.forEach((doc) => {
         const Title = { ...doc.data() };
-        if (items.find((gname) => gname === Title.title) == undefined){
+        if (items.find((gname) => gname === Title.title) == undefined) {
           items.push(Title.title);
         }
       });
     });
 
-    // taking all bokokmarks
-    onSnapshot(group, (snap) => {
-      snap.docs.forEach((groupNameid) => {
-        const Title = { ...groupNameid.data() };
-        const g = collection(d, Title.title);
-        getDocs(g)
-          .then((snapshot) => {
-            snapshot.docs.forEach((doc) => {
-              let count = 0;
-              ABM.forEach((book) => {
-                if (book.id === doc.id) {
-                  count += 1;
+    
+    // all bookmark array
+    onSnapshot(d, (s) => {
+      getDocs(group).then((snap) => {
+        snap.docs.forEach((docu) => {
+          const Title = { ...docu.data() };
+          const g = collection(d, Title.title);
+          getDocs(g)
+            .then((snapshot) => {
+              snapshot.docs.forEach((doc) => {
+                let count = 0;
+                ABM.forEach((book) => {
+                  if (book.id === doc.id) {
+                    count += 1;
+                  }
+                });
+                if (count == 0) {
+                  ABM.push({
+                    ...doc.data(),
+                    id: doc.id,
+                    group: Title.title,
+                    showDesc: false,
+                  });
                 }
               });
-              if (count == 0) {
-                ABM.push({
-                  ...doc.data(),
-                  id: doc.id,
-                  group: Title.title,
-                  showDesc: false,
-                });
-              }
+            })
+            .catch(() => {
+              console.log("error in storing data");
             });
-          })
-          .catch(() => {
-            console.log("error in storing data");
-          });
+        });
       });
     });
+    provide("ABM", ABM);
 
     // deleting bookmark
     function deletecard(id, group) {
-        console.log(id);
-        // const docref = doc(firestore, "name/" + uname.value +"/bookmarks", id);
-        const docref = doc(d, "/"+group, id);
+      console.log(id);
+      // const docref = doc(firestore, "name/" + uname.value +"/bookmarks", id);
+      const col = collection(d, group);
 
-        console.log(docref);
-          deleteDoc(docref)
-          .then((e) => {
-            // e.preventDefault();
-            console.log("delete success");
-          })
-          .catch(() => {
-            console.log("error");
-          });
-      
-      }
+      const docref = doc(col, id);
 
-    provide('ABM',ABM)
+      console.log(docref);
+      deleteDoc(docref)
+        .then((e) => {
+          // e.preventDefault();
+          console.log("delete success");
+        })
+        .catch(() => {
+          console.log("error");
+        });
+    }
+    provide("items", items);
+
     return {
       deletecard,
       title,
@@ -106,10 +121,10 @@ export default {
       all,
     };
   },
-  data(){
-    return{
-      emit:['logout'],
-    }
+  data() {
+    return {
+      emit: ["logout"],
+    };
   },
   components: {
     toolbar,

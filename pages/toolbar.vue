@@ -44,15 +44,6 @@
 export default {
   name: "toolBar",
   emits: ['showlogin', 'showsignup'],
-  setup(){
-    onBeforeMount:{
-      console.log("toolbar1.onBeforeMount");
-    }
-    onMounted:{
-      console.log("toolbar1.onMounted");
-    }
-    
-  },
   data() {
     return {
       navDrawer: false,

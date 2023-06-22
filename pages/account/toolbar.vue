@@ -64,14 +64,6 @@
 <script>
 export default {
   name: "navigatorTop",
-  setup() {
-    onBeforeMount: {
-      console.log("toolbar2.onBeforeMount");
-    }
-    onMounted: {
-      console.log("toolbar2.onMounted");
-    }
-  },
   data() {
     return {
       navDrawer: false,

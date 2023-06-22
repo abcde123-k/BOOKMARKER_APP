@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-sheet class="d-flex justify-sm-space-around middle">
+    <v-sheet class="d-flex middle">
       <v-btn
         append-icon="mdi-plus"
         width="220"
@@ -70,9 +70,9 @@ export default {
     const title = ref("");
     const desc = ref("");
     const link = ref("");
-    const search = ref("personal");
+    const search = ref("");
 
-    const items = inject("items");
+    let items = ref(inject("items"));
 
     // addbutton function
     function addBookmark() {
@@ -131,7 +131,10 @@ export default {
 </script>
 
 <style scoped>
-.middle{
-  margin-top:25%;
+.middle {
+  width: 250px;
+  height: 300px;
+  margin: auto;
+  margin-top: 10%;
 }
 </style>

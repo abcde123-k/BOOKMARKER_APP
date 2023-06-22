@@ -11,22 +11,16 @@
         <!-- combo box -->
         <v-combobox
             v-model:search="search"
-            :hide-no-data="false"
+            :hide-no-data="true"
             v-model="model"
-            :items="group"
+            :items="items"
             hide-selected
             label="Group"
+            class="ma-3"
             persistent-hint
             small-chips
           >
-            <template v-slot:no-data>
-              <v-list-item>
-                <v-list-item-title>
-                  No results matching "<strong>{{ search }}</strong
-                    >". Press <kbd>enter</kbd> to create a new one
-                </v-list-item-title>
-              </v-list-item>
-            </template>
+            
             </v-combobox>
       </div>
     </v-sheet>
@@ -38,11 +32,11 @@
       <v-sheet
         v-for="bookmark in sortFunc()"
         :key="bookmark.id"
-        class="align-self-center"
+        class="align-self-center pa-4"
       >
         <v-card
           v-if="filteredList(bookmark) && (search===bookmark.group || search=='All')"
-          class="ma-7 pa-2"
+          class="pa-2"
           min-width="320"
           max-width="380"
           border
@@ -104,6 +98,7 @@
               </v-card-text>
             </div>
           </v-expand-transition>
+          <v-container class="ma-n5" id="extra"></v-container>
         </v-card>
       </v-sheet>
     </v-sheet>
@@ -126,24 +121,23 @@ export default {
   },
 
   setup() {
-    const ABM = inject("ABM");
+    let ABM = ref(inject("ABM"));
     const items = inject('items');
-    const group=items
-    if(group.find((e)=> e=='All')==undefined)
-    group.push('All');
+    if(items.find((e)=> e=='All')==undefined)
+    items.push('All');
 
     const search=ref('All');
     return {
       ABM,
       search,
-      group,
+      items,
     };
   },
 
   methods: {
     sortFunc() {
       return this.ABM.slice().sort(function (a, b) {
-        return a.title > b.title ? 1 : -1;
+        return a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1;
       });
     },
 
